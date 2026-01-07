@@ -1,4 +1,3 @@
-local _6 = loadstring(game:HttpGet([[https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua]]))()
 local _10 = loadstring(game:HttpGet([[https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua]]))()
 local _14 = loadstring(game:HttpGet([[https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua]]))()
 local _call20 = _6:CreateWindow({
