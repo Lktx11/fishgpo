@@ -1,0 +1,17 @@
+-- Compra automática de isca a cada 5 segundos
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ShopEvent = ReplicatedStorage.Events.Shop
+
+while true do
+    local bait = workspace.BuyableItems:FindFirstChild("Common Fish Bait")
+
+    if bait then
+        ShopEvent:InvokeServer(bait, 1)
+        print("Isca comprada com sucesso")
+    else
+        warn("Common Fish Bait não encontrado")
+    end
+
+    task.wait(5) -- espera 5 segundos
+end
