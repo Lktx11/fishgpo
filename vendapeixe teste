@@ -6,14 +6,14 @@ vu1.AutoBuyBait = false
 vu1.AutoSellFish = false
 
 -- UI
-local v2 = loadstring(game:  HttpGet('https://raw.githubusercontent.com/Lktx11/fishgpo/refs/heads/main/janela'))().CreateLib('Raph Pesca Automatica', 'HalloweenTheme')
+local v2 = loadstring(game: HttpGet('https://raw.githubusercontent.com/Lktx11/fishgpo/refs/heads/main/janela'))().CreateLib('Raph Pesca Automatica', 'HalloweenTheme')
 
 local v3 = v2:AddTab('Main')
 local v7 = v3:NewSection('Fishing / Player')
 local v8 = v2:AddTab('Sell Fish')
 
 -- SERVICES / VARS
-local vu12 = game:  GetService('Players').LocalPlayer
+local vu12 = game:GetService('Players').LocalPlayer
 local vu14 = vu12:WaitForChild('PlayerGui')
 local vu15 = workspace. CurrentCamera
 
@@ -39,30 +39,19 @@ local function vu30()
     mouse1click()
 end
 
--- FUNÇÃO PARA ABRIR DIÁLOGO DO NPC
-local function AbrirDialogoNPC()
-    local args = {
-        [1] = {
-            [1] = "npcChat",
-            [2] = true
-        }
-    }
+-- FUNÇÃO PARA VENDER PEIXE
+local function VenderPeixe(fishName)
     pcall(function()
-        game: GetService("ReplicatedStorage").Events.Quest:InvokeServer(unpack(args))
-    end)
-end
-
--- FUNÇÃO PARA VENDER PEIXE ESPECÍFICO
-local function SellSpecificFish(fishName)
-    local args = {
-        [1] = {
-            ["Fish"] = fishName,
-            ["All"] = true,
-            ["Method"] = "SellFish"
+        -- Simples:  só vende o peixe
+        local args = {
+            [1] = {
+                ["Fish"] = fishName,
+                ["All"] = false,
+                ["Method"] = "SellFish"
+            }
         }
-    }
-    pcall(function()
-        game: GetService("ReplicatedStorage").FishingShopRemote:InvokeServer(unpack(args))
+        game:GetService("ReplicatedStorage").FishingShopRemote:InvokeServer(unpack(args))
+        task.wait(math.random(3, 5))
     end)
 end
 
@@ -88,7 +77,7 @@ task.spawn(function()
                     local v35 = v33:FindFirstChild('Player')
 
                     if v34 and v35 then
-                        local v36 = v34.AbsolutePosition.Y
+                        local v36 = v34.AbsolutePosition. Y
                         local v37 = v34.AbsoluteSize.Y
                         local v38 = v35.AbsolutePosition.Y + v35.AbsoluteSize.Y / 2
                         local v39 = v36 + v37 / 2
@@ -195,10 +184,10 @@ end)
 -- =========================
 -- ANTI AFK
 -- =========================
-task.spawn(function()
+task. spawn(function()
     while true do
         if vu1.AntiAFK then
-            vu15.CFrame = vu15.CFrame * CFrame. Angles(0, math.rad(0.5), 0)
+            vu15.CFrame = vu15.CFrame * CFrame. Angles(0, math.rad(0. 5), 0)
         end
         task.wait(180)
     end
@@ -215,7 +204,7 @@ task.spawn(function()
                 [2] = 1
             }
             pcall(function()
-                game:  GetService("ReplicatedStorage").Events.Shop:InvokeServer(unpack(args))
+                game: GetService("ReplicatedStorage").Events.Shop:InvokeServer(unpack(args))
             end)
         end
         task.wait(5)
@@ -223,22 +212,13 @@ task.spawn(function()
 end)
 
 -- =========================
--- AUTO SELL FISH (COM DIÁLOGO)
+-- AUTO SELL FISH
 -- =========================
 task.spawn(function()
     while true do
         if vu1.AutoSellFish then
-            -- Abre diálogo do NPC
-            AbrirDialogoNPC()
-            task.wait(math.random(2, 4))
-            
-            -- Vende o peixe
-            SellSpecificFish("Tigerfin")
-            task.wait(math.random(3, 5))
-            
-            -- Fecha diálogo
-            AbrirDialogoNPC()
-            task.wait(math. random(5, 10))
+            VenderPeixe("Tigerfin")
+            task.wait(math.random(60, 120))
         end
         task.wait(1)
     end
@@ -247,7 +227,7 @@ end)
 -- =========================
 -- UI TOGGLES
 -- =========================
-v7: NewToggle('Auto Fish', '', function(v)
+v7:NewToggle('Auto Fish', '', function(v)
     vu1.AutoFish = v
 end)
 
@@ -259,6 +239,6 @@ v7:NewToggle('Auto Buy Bait', '', function(v)
     vu1.AutoBuyBait = v
 end)
 
-v8:NewToggle('Auto Sell Fish', '', function(v)
+v8:NewToggle('Auto Sell Fish (Tigerfin)', '', function(v)
     vu1.AutoSellFish = v
 end)
