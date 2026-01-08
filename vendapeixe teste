@@ -3,7 +3,6 @@ local vu1 = getgenv()
 vu1.AutoFish = false
 vu1.AntiAFK = false
 vu1.AutoBuyBait = false
-vu1.AutoSellFish = false
 vu1.SellAnglerfish = false
 vu1.SellDarkSkeletalShark = false
 vu1.SellJackOBite = false
@@ -30,7 +29,7 @@ local v8 = v2:AddTab('Sell Fish')
 -- SERVICES / VARS
 local vu12 = game:GetService('Players').LocalPlayer
 local vu14 = vu12:WaitForChild('PlayerGui')
-local vu15 = workspace.  CurrentCamera
+local vu15 = workspace. CurrentCamera
 
 local vu16 = false
 local vu17 = nil
@@ -48,7 +47,7 @@ local vu26 = nil
 
 -- RECAST
 local function vu30()
-    local x = vu15. ViewportSize.X / 2
+    local x = vu15.ViewportSize.X / 2
     local y = vu15.ViewportSize.Y / 2
     mousemoveabs(x, y)
     mouse1click()
@@ -58,13 +57,16 @@ end
 local function GetPeliCount()
     local peliLabel = vu12:FindFirstChild("PlayerGui"):FindFirstChild("HUD"):FindFirstChild("Main"):FindFirstChild("Peli"):FindFirstChild("TextLabel")
     if peliLabel then
-        return tonumber(peliLabel.  Text) or 0
+        return tonumber(peliLabel.Text) or 0
     end
     return 0
 end
 
--- FUNÇÃO PARA VENDER PEIXE ESPECÍFICO
+-- FUNÇÃO PARA VENDER PEIXE ESPECÍFICO COM DELAY ALEATÓRIO
 local function SellSpecificFish(fishName)
+    local randomDelay = math.random(15, 30)
+    task.wait(randomDelay)
+    
     local args = {
         [1] = {
             ["Fish"] = fishName,
@@ -72,7 +74,7 @@ local function SellSpecificFish(fishName)
             ["Method"] = "SellFish"
         }
     }
-    game:GetService("ReplicatedStorage").FishingShopRemote:InvokeServer(unpack(args))
+    game:GetService("ReplicatedStorage").FishingShopRemote: InvokeServer(unpack(args))
 end
 
 -- =========================
@@ -97,7 +99,7 @@ task.spawn(function()
                     local v35 = v33:FindFirstChild('Player')
 
                     if v34 and v35 then
-                        local v36 = v34.AbsolutePosition.Y
+                        local v36 = v34.AbsolutePosition. Y
                         local v37 = v34.AbsoluteSize.Y
                         local v38 = v35.AbsolutePosition.Y + v35.AbsoluteSize.Y / 2
                         local v39 = v36 + v37 / 2
@@ -204,7 +206,7 @@ end)
 -- =========================
 -- ANTI AFK
 -- =========================
-task. spawn(function()
+task.spawn(function()
     while true do
         if vu1.AntiAFK then
             vu15.CFrame = vu15.CFrame * CFrame. Angles(0, math.rad(0. 5), 0)
@@ -220,12 +222,12 @@ task. spawn(function()
     while true do
         if vu1.AutoBuyBait then
             local args = {
-                [1] = workspace. BuyableItems: FindFirstChild("Common Fish Bait"),
+                [1] = workspace.BuyableItems: FindFirstChild("Common Fish Bait"),
                 [2] = 1
             }
             game:GetService("ReplicatedStorage").Events.Shop:InvokeServer(unpack(args))
         end
-        task.wait(5)
+        task. wait(5)
     end
 end)
 
@@ -234,30 +236,75 @@ end)
 -- =========================
 task.spawn(function()
     while true do
-        if vu1.SellAnglerfish then SellSpecificFish("Anglerfish") end
-        if vu1.SellDarkSkeletalShark then SellSpecificFish("Dark Skeletal Shark") end
-        if vu1.SellJackOBite then SellSpecificFish("Jack-O'-Bite") end
-        if vu1.SellSwordfish then SellSpecificFish("Swordfish") end
-        if vu1.SellGoldenPolkaPuffer then SellSpecificFish("Golden Polka Puffer") end
-        if vu1.SellGoldenRibbonAngelfish then SellSpecificFish("Golden Ribbon Angelfish") end
-        if vu1.SellGoldenTigerfin then SellSpecificFish("Golden Tigerfin") end
-        if vu1.SellSkeletalShark then SellSpecificFish("Skeletal Shark") end
-        if vu1.SellCandyCornSquid then SellSpecificFish("Candy Corn Squid") end
-        if vu1.SellCrimsonPolkaPuffer then SellSpecificFish("Crimson Polka Puffer") end
-        if vu1.SellCrimsonSnapper then SellSpecificFish("Crimson Snapper") end
-        if vu1.SellExoticTigerfin then SellSpecificFish("Exotic Tigerfin") end
-        if vu1.SellFangfish then SellSpecificFish("Fangfish") end
-        if vu1.SellZebraRibbonAngelfish then SellSpecificFish("Zebra Ribbon Angelfish") end
-        if vu1.SellBlueLipGrouper then SellSpecificFish("Blue-Lip Grouper") end
+        if vu1.SellAnglerfish then
+            SellSpecificFish("Anglerfish")
+            vu1.SellAnglerfish = false
+        end
+        if vu1.SellDarkSkeletalShark then
+            SellSpecificFish("Dark Skeletal Shark")
+            vu1.SellDarkSkeletalShark = false
+        end
+        if vu1.SellJackOBite then
+            SellSpecificFish("Jack-O'-Bite")
+            vu1.SellJackOBite = false
+        end
+        if vu1.SellSwordfish then
+            SellSpecificFish("Swordfish")
+            vu1.SellSwordfish = false
+        end
+        if vu1.SellGoldenPolkaPuffer then
+            SellSpecificFish("Golden Polka Puffer")
+            vu1.SellGoldenPolkaPuffer = false
+        end
+        if vu1.SellGoldenRibbonAngelfish then
+            SellSpecificFish("Golden Ribbon Angelfish")
+            vu1.SellGoldenRibbonAngelfish = false
+        end
+        if vu1.SellGoldenTigerfin then
+            SellSpecificFish("Golden Tigerfin")
+            vu1.SellGoldenTigerfin = false
+        end
+        if vu1.SellSkeletalShark then
+            SellSpecificFish("Skeletal Shark")
+            vu1.SellSkeletalShark = false
+        end
+        if vu1.SellCandyCornSquid then
+            SellSpecificFish("Candy Corn Squid")
+            vu1.SellCandyCornSquid = false
+        end
+        if vu1.SellCrimsonPolkaPuffer then
+            SellSpecificFish("Crimson Polka Puffer")
+            vu1.SellCrimsonPolkaPuffer = false
+        end
+        if vu1.SellCrimsonSnapper then
+            SellSpecificFish("Crimson Snapper")
+            vu1.SellCrimsonSnapper = false
+        end
+        if vu1.SellExoticTigerfin then
+            SellSpecificFish("Exotic Tigerfin")
+            vu1.SellExoticTigerfin = false
+        end
+        if vu1.SellFangfish then
+            SellSpecificFish("Fangfish")
+            vu1.SellFangfish = false
+        end
+        if vu1.SellZebraRibbonAngelfish then
+            SellSpecificFish("Zebra Ribbon Angelfish")
+            vu1.SellZebraRibbonAngelfish = false
+        end
+        if vu1.SellBlueLipGrouper then
+            SellSpecificFish("Blue-Lip Grouper")
+            vu1.SellBlueLipGrouper = false
+        end
         
-        task.wait(5)
+        task.wait(1)
     end
 end)
 
 -- =========================
 -- UI TOGGLES
 -- =========================
-v7:NewToggle('Auto Fish', '', function(v)
+v7: NewToggle('Auto Fish', '', function(v)
     vu1.AutoFish = v
 end)
 
