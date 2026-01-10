@@ -4,7 +4,7 @@
 local vu1 = getgenv()
 vu1.AutoFish = false
 vu1.AntiAFK = false
-vu1.AutoBuyBait = false -- Reativado
+vu1.AutoBuyBait = false
 
 local fishes = {
     {cfg = "SellAnglerfish", name = "Anglerfish"},
@@ -27,29 +27,34 @@ local fishes = {
 for _, fish in ipairs(fishes) do vu1[fish.cfg] = false end
 
 -- =============================================================================
--- INTERFACE (Utilizando SimpleKavo de x.txt)
+-- UI SETUP (SimpleKavo conforme x.txt)
 -- =============================================================================
 local SimpleKavo = loadstring(game:HttpGet('https://raw.githubusercontent.com/Lktx11/fishgpo/refs/heads/main/janela'))()
-local v2 = SimpleKavo.CreateLib('Raph faz o L', 'HalloweenTheme')
+local v2 = SimpleKavo.CreateLib('Raph Pesca Automatica', 'HalloweenTheme')
 
 local v3 = v2:AddTab('Main')
-local v7 = v3:NewSection('Pesca')
-
+local v7 = v3:NewSection('Fishing / Player')
 local v8 = v2:AddTab('Sell Fish')
-local v9 = v8:NewSection('Vender Peixinho')
+local v9 = v8:NewSection('Individual Sell')
 
 -- =============================================================================
--- SERVIÇOS E VARIÁVEIS DO JOGADOR
+-- SERVIÇOS E VARS ORIGINAIS
 -- =============================================================================
 local lp = game:GetService('Players').LocalPlayer
 local vu14 = lp:WaitForChild('PlayerGui')
 local vu15 = workspace.CurrentCamera
 
-local vu16, vu17, vu18 = false, nil, 0
+local vu16 = false
+local vu17 = nil
+local vu18 = 0
 local vu19 = tick()
 local vu20 = {}
-local vu21, vu22, vu23 = 0.025, 0.04, 0.003
-local vu24, vu25, vu26 = false, false, nil
+local vu21 = 0.025
+local vu22 = 0.04
+local vu23 = 0.003
+local vu24 = false
+local vu25 = false
+local vu26 = nil
 
 -- =============================================================================
 -- FUNÇÕES DE SUPORTE
@@ -57,9 +62,9 @@ local vu24, vu25, vu26 = false, false, nil
 
 local function GetFishCount(fishName)
     local count = 0
-    local backpack = lp:FindFirstChild("Backpack")
-    if backpack then
-        for _, item in ipairs(backpack:GetChildren()) do
+    local bp = lp:FindFirstChild("Backpack")
+    if bp then
+        for _, item in ipairs(bp:GetChildren()) do
             if item.Name == fishName then count = count + 1 end
         end
     end
@@ -76,60 +81,89 @@ local function SellSpecificFish(fishName)
 end
 
 local function vu30()
-    mousemoveabs(vu15.ViewportSize.X / 2, vu15.ViewportSize.Y / 2)
+    local x = vu15.ViewportSize.X / 2
+    local y = vu15.ViewportSize.Y / 2
+    mousemoveabs(x, y)
     mouse1click()
 end
 
 -- =============================================================================
--- LOOPS DE EXECUÇÃO
+-- LOOPS (Auto Fish Original Restaurado)
 -- =============================================================================
 
--- Loop Auto Buy Bait (RESTAURADO)
+-- Auto Buy Bait
 task.spawn(function()
     while true do
         if vu1.AutoBuyBait then
             pcall(function()
                 local bait = workspace.BuyableItems:FindFirstChild("Common Fish Bait")
-                if bait then
-                    game:GetService("ReplicatedStorage").Events.Shop:InvokeServer(bait, 1)
-                end
+                if bait then game:GetService("ReplicatedStorage").Events.Shop:InvokeServer(bait, 1) end
             end)
         end
         task.wait(5)
     end
 end)
 
--- Loop Auto Fish
+-- Auto Fish (Lógica Original Completa)
 task.spawn(function()
     while true do
         if vu1.AutoFish then
             local v31 = vu14:FindFirstChild('FishingUIBill')
             local v32 = tick()
+
             if v31 then
                 vu24, vu25, vu26 = true, true, nil
                 local v33 = v31:FindFirstChild('Frame')
-                local v34, v35 = v33 and v33:FindFirstChild('Goal'), v33 and v33:FindFirstChild('Player')
-                if v34 and v35 then
-                    local v36, v37 = v34.AbsolutePosition.Y, v34.AbsoluteSize.Y
-                    local v38 = v35.AbsolutePosition.Y + v35.AbsoluteSize.Y / 2
-                    mousemoveabs(vu15.ViewportSize.X / 2, vu15.ViewportSize.Y / 2)
-                    local v41 = math.max(v32 - vu19, vu23)
-                    local v42 = not vu17 and 0 or (v38 - vu17) / v41
-                    table.insert(vu20, 1, v42)
-                    if #vu20 > 5 then table.remove(vu20) end
-                    local v46 = 0
-                    for _, v in ipairs(vu20) do v46 += v end
-                    local v48 = v46 / #vu20
-                    local v49 = vu18 == 0 and 0 or (v48 - vu18) / v41
-                    vu17, vu18, vu19 = v38, v48, v32
-                    local v50 = v38 + v48 * vu22 + 0.6 * v49 * vu22 ^ 2
-                    local v57 = v36 + math.min(math.max(6, math.abs(v48) * 0.2), v37 * 0.35)
-                    local v58 = (v36 + v37) - math.min(math.max(6, math.abs(v48) * 0.2), v37 * 0.35)
-                    if v50 < v57 then if vu16 then vu16 = false; mouse1release() end
-                    elseif v50 > v58 then if not vu16 then vu16 = true; mouse1press() end
+                if v33 then
+                    local v34 = v33:FindFirstChild('Goal')
+                    local v35 = v33:FindFirstChild('Player')
+
+                    if v34 and v35 then
+                        local v36 = v34.AbsolutePosition.Y
+                        local v37 = v34.AbsoluteSize.Y
+                        local v38 = v35.AbsolutePosition.Y + v35.AbsoluteSize.Y / 2
+                        local v39 = v36 + v37 / 2
+                        local v40 = v36 + v37
+
+                        mousemoveabs(vu15.ViewportSize.X / 2, vu15.ViewportSize.Y / 2)
+
+                        local v41 = math.max(v32 - vu19, vu23)
+                        local v42 = not vu17 and 0 or (v38 - vu17) / v41
+
+                        table.insert(vu20, 1, v42)
+                        if #vu20 > 5 then table.remove(vu20) end
+
+                        local v46 = 0
+                        for _, v in ipairs(vu20) do v46 += v end
+
+                        local v48 = v46 / #vu20
+                        local v49 = vu18 == 0 and 0 or (v48 - vu18) / v41
+
+                        vu17, vu18, vu19 = v38, v48, v32
+
+                        local v50 = v38 + v48 * vu22 + 0.6 * v49 * vu22 ^ 2
+                        local v51, v52 = math.abs(v48), math.abs(v49)
+                        local v53 = math.max(12, v51 * 0.4 + v52 * 0.15)
+                        local v54 = math.max(6, v51 * 0.2 + v52 * 0.08)
+                        local v55 = (v51 > 80 or v52 > 400) and v53 or v54
+                        local v56 = math.min(v55, v37 * 0.35)
+
+                        local v57, v58 = v36 + v56, v40 - v56
+
+                        if v50 < v57 then
+                            if vu16 then vu16 = false; mouse1release() end
+                        elseif v50 > v58 then
+                            if not vu16 then vu16 = true; mouse1press() end
+                        else
+                            if vu16 then vu16 = false; mouse1release() end
+                            local v63 = math.abs(v50 - v39) / (v37 / 2)
+                            local v64 = vu21 / (math.clamp(v51 / 40, 0.8, 5) * math.clamp(v63 * 2, 0.5, 3))
+                            local v65 = math.clamp(v64, 0.008, 0.08)
+                            mouse1press(); task.wait(v65 * 0.9); mouse1release(); task.wait(v65 * 0.6)
+                        end
                     else
                         if vu16 then vu16 = false; mouse1release() end
-                        mouse1press(); task.wait(0.02); mouse1release()
+                        vu20, vu18, vu17 = {}, 0, nil
                     end
                 end
             else
@@ -158,23 +192,21 @@ task.spawn(function()
     end
 end)
 
--- Anti-AFK
+-- Anti-AFK Original
 task.spawn(function()
     while true do
         if vu1.AntiAFK then vu15.CFrame = vu15.CFrame * CFrame.Angles(0, math.rad(0.5), 0) end
-        task.wait(60)
+        task.wait(180)
     end
 end)
 
 -- =============================================================================
--- CRIAÇÃO DOS CONTROLES NA UI
+-- INTERFACE
 -- =============================================================================
-v7:NewToggle('Auto Fish', 'Pesca automatica', function(v) vu1.AutoFish = v end)
-v7:NewToggle('Anti-AFK', 'Evita kick', function(v) vu1.AntiAFK = v end)
-v7:NewToggle('Auto Buy Bait', 'Compra isca comum', function(v) vu1.AutoBuyBait = v end)
+v7:NewToggle('Auto Fish', '', function(v) vu1.AutoFish = v end)
+v7:NewToggle('Anti-AFK', '', function(v) vu1.AntiAFK = v end)
+v7:NewToggle('Auto Buy Bait', '', function(v) vu1.AutoBuyBait = v end)
 
 for _, fish in ipairs(fishes) do
-    v9:NewToggle('Vender ' .. fish.name, 'Venda de peixinho maneira', function(v)
-        vu1[fish.cfg] = v
-    end)
+    v9:NewToggle('Vender ' .. fish.name, '', function(v) vu1[fish.cfg] = v end)
 end
