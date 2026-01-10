@@ -22,11 +22,12 @@ vu1.SellFangfish = false
 vu1.SellZebraRibbonAngelfish = false
 vu1.SellBlueLipGrouper = false
 
--- UI SETUP
-local v2 = loadstring(game:HttpGet('https://raw.githubusercontent.com/Lktx11/fishgpo/refs/heads/main/janela'))().CreateLib('Raph Pesca Automatica', 'HalloweenTheme')
+-- UI SETUP (Kavo Library)
+local v2 = loadstring(game:HttpGet('https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua'))().CreateLib('Raph Pesca Automatica', 'HalloweenTheme')
 local v3 = v2:AddTab('Main')
 local v7 = v3:NewSection('Fishing / Player')
 local v8 = v2:AddTab('Sell Fish')
+local v9 = v8:NewSection('Individual Sell')
 
 -- SERVICES
 local vu12 = game:GetService('Players').LocalPlayer
@@ -50,7 +51,7 @@ local function vu30()
 end
 
 -- ==========================================
--- FUNÇÃO DE VENDA SEGURA (CORRIGIDA)
+-- FUNÇÃO DE VENDA SEGURA
 -- ==========================================
 local function SellSpecificFish(fishName)
     local remote = game:GetService("ReplicatedStorage"):FindFirstChild("FishingShopRemote")
@@ -63,9 +64,6 @@ local function SellSpecificFish(fishName)
                 ["Method"] = "SellFish"
             })
         end)
-        if not success then warn("Erro ao vender: " .. fishName) end
-    else
-        warn("Remote de venda não encontrado. O jogo pode ter alterado o nome.")
     end
 end
 
@@ -154,7 +152,7 @@ task.spawn(function()
 end)
 
 -- =========================
--- AUTO SELL (RESTRUTURADO)
+-- AUTO SELL
 -- =========================
 task.spawn(function()
     local fishes = {
@@ -178,7 +176,6 @@ task.spawn(function()
     while true do
         for _, fish in ipairs(fishes) do
             if vu1[fish.cfg] then
-                -- Humanização: espera entre 2 a 4 segundos antes de cada venda
                 task.wait(math.random(20, 40) / 10) 
                 SellSpecificFish(fish.name)
             end
@@ -188,24 +185,24 @@ task.spawn(function()
 end)
 
 -- =========================
--- UI TOGGLES
+-- UI TOGGLES (CORRIGIDO PARA 'NewToggle')
 -- =========================
-v7:NewToggle('Auto Fish', '', function(v) vu1.AutoFish = v end)
-v7:NewToggle('Anti-AFK', '', function(v) vu1.AntiAFK = v end)
-v7:NewToggle('Auto Buy Bait', '', function(v) vu1.AutoBuyBait = v end)
+v7:CreateToggle('Auto Fish', function(v) vu1.AutoFish = v end)
+v7:CreateToggle('Anti-AFK', function(v) vu1.AntiAFK = v end)
+v7:CreateToggle('Auto Buy Bait', function(v) vu1.AutoBuyBait = v end)
 
-v8:NewToggle('Sell Anglerfish', '', function(v) vu1.SellAnglerfish = v end)
-v8:NewToggle('Sell Dark Skeletal Shark', '', function(v) vu1.SellDarkSkeletalShark = v end)
-v8:NewToggle('Sell Jack-O\'-Bite', '', function(v) vu1.SellJackOBite = v end)
-v8:NewToggle('Sell Swordfish', '', function(v) vu1.SellSwordfish = v end)
-v8:NewToggle('Sell Golden Polka Puffer', '', function(v) vu1.SellGoldenPolkaPuffer = v end)
-v8:NewToggle('Sell Golden Ribbon Angelfish', '', function(v) vu1.SellGoldenRibbonAngelfish = v end)
-v8:NewToggle('Sell Golden Tigerfin', '', function(v) vu1.SellGoldenTigerfin = v end)
-v8:NewToggle('Sell Skeletal Shark', '', function(v) vu1.SellSkeletalShark = v end)
-v8:NewToggle('Sell Candy Corn Squid', '', function(v) vu1.SellCandyCornSquid = v end)
-v8:NewToggle('Sell Crimson Polka Puffer', '', function(v) vu1.SellCrimsonPolkaPuffer = v end)
-v8:NewToggle('Sell Crimson Snapper', '', function(v) vu1.SellCrimsonSnapper = v end)
-v8:NewToggle('Sell Exotic Tigerfin', '', function(v) vu1.SellExoticTigerfin = v end)
-v8:NewToggle('Sell Fangfish', '', function(v) vu1.SellFangfish = v end)
-v8:NewToggle('Sell Zebra Ribbon Angelfish', '', function(v) vu1.SellZebraRibbonAngelfish = v end)
-v8:NewToggle('Sell Blue-Lip Grouper', '', function(v) vu1.SellBlueLipGrouper = v end)
+v9:CreateToggle('Sell Anglerfish', function(v) vu1.SellAnglerfish = v end)
+v9:CreateToggle('Sell Dark Skeletal Shark', function(v) vu1.SellDarkSkeletalShark = v end)
+v9:CreateToggle('Sell Jack-O\'-Bite', function(v) vu1.SellJackOBite = v end)
+v9:CreateToggle('Sell Swordfish', function(v) vu1.SellSwordfish = v end)
+v9:CreateToggle('Sell Golden Polka Puffer', function(v) vu1.SellGoldenPolkaPuffer = v end)
+v9:CreateToggle('Sell Golden Ribbon Angelfish', function(v) vu1.SellGoldenRibbonAngelfish = v end)
+v9:CreateToggle('Sell Golden Tigerfin', function(v) vu1.SellGoldenTigerfin = v end)
+v9:CreateToggle('Sell Skeletal Shark', function(v) vu1.SellSkeletalShark = v end)
+v9:CreateToggle('Sell Candy Corn Squid', function(v) vu1.SellCandyCornSquid = v end)
+v9:CreateToggle('Sell Crimson Polka Puffer', function(v) vu1.SellCrimsonPolkaPuffer = v end)
+v9:CreateToggle('Sell Crimson Snapper', function(v) vu1.SellCrimsonSnapper = v end)
+v9:CreateToggle('Sell Exotic Tigerfin', function(v) vu1.SellExoticTigerfin = v end)
+v9:CreateToggle('Sell Fangfish', function(v) vu1.SellFangfish = v end)
+v9:CreateToggle('Sell Zebra Ribbon Angelfish', function(v) vu1.SellZebraRibbonAngelfish = v end)
+v9:CreateToggle('Sell Blue-Lip Grouper', function(v) vu1.SellBlueLipGrouper = v end)
