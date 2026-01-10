@@ -4,8 +4,8 @@
 local vu1 = getgenv()
 vu1.AutoFish = false
 vu1.AntiAFK = false
+vu1.AutoBuyBait = false -- Reativado
 
--- Lista oficial de peixes e mapeamento para a UI
 local fishes = {
     {cfg = "SellAnglerfish", name = "Anglerfish"},
     {cfg = "SellDarkSkeletalShark", name = "Dark Skeletal Shark"},
@@ -24,10 +24,7 @@ local fishes = {
     {cfg = "SellBlueLipGrouper", name = "Blue-Lip Grouper"}
 }
 
--- Inicializa as variáveis de venda como falso
-for _, fish in ipairs(fishes) do
-    vu1[fish.cfg] = false
-end
+for _, fish in ipairs(fishes) do vu1[fish.cfg] = false end
 
 -- =============================================================================
 -- INTERFACE (Utilizando SimpleKavo de x.txt)
@@ -48,7 +45,6 @@ local lp = game:GetService('Players').LocalPlayer
 local vu14 = lp:WaitForChild('PlayerGui')
 local vu15 = workspace.CurrentCamera
 
--- Variáveis de controle da pesca
 local vu16, vu17, vu18 = false, nil, 0
 local vu19 = tick()
 local vu20 = {}
@@ -56,42 +52,31 @@ local vu21, vu22, vu23 = 0.025, 0.04, 0.003
 local vu24, vu25, vu26 = false, false, nil
 
 -- =============================================================================
--- FUNÇÕES DE SUPORTE (BACKPACK & REMOTES)
+-- FUNÇÕES DE SUPORTE
 -- =============================================================================
 
--- Função que conta peixes na Backpack (Confirmado pelo seu Dex)
 local function GetFishCount(fishName)
     local count = 0
     local backpack = lp:FindFirstChild("Backpack")
     if backpack then
         for _, item in ipairs(backpack:GetChildren()) do
-            if item.Name == fishName then
-                count = count + 1
-            end
+            if item.Name == fishName then count = count + 1 end
         end
     end
     return count
 end
 
--- Função de Venda Segura
 local function SellSpecificFish(fishName)
     local remote = game:GetService("ReplicatedStorage"):FindFirstChild("FishingShopRemote")
     if remote then
         pcall(function()
-            remote:InvokeServer({
-                ["Fish"] = fishName,
-                ["All"] = false,
-                ["Method"] = "SellFish"
-            })
+            remote:InvokeServer({["Fish"] = fishName, ["All"] = false, ["Method"] = "SellFish"})
         end)
     end
 end
 
--- Função de Recast (Lançar vara)
 local function vu30()
-    local x = vu15.ViewportSize.X / 2
-    local y = vu15.ViewportSize.Y / 2
-    mousemoveabs(x, y)
+    mousemoveabs(vu15.ViewportSize.X / 2, vu15.ViewportSize.Y / 2)
     mouse1click()
 end
 
@@ -99,56 +84,52 @@ end
 -- LOOPS DE EXECUÇÃO
 -- =============================================================================
 
--- Loop de Auto Fish
+-- Loop Auto Buy Bait (RESTAURADO)
+task.spawn(function()
+    while true do
+        if vu1.AutoBuyBait then
+            pcall(function()
+                local bait = workspace.BuyableItems:FindFirstChild("Common Fish Bait")
+                if bait then
+                    game:GetService("ReplicatedStorage").Events.Shop:InvokeServer(bait, 1)
+                end
+            end)
+        end
+        task.wait(5)
+    end
+end)
+
+-- Loop Auto Fish
 task.spawn(function()
     while true do
         if vu1.AutoFish then
             local v31 = vu14:FindFirstChild('FishingUIBill')
             local v32 = tick()
-
             if v31 then
                 vu24, vu25, vu26 = true, true, nil
                 local v33 = v31:FindFirstChild('Frame')
-                local v34 = v33 and v33:FindFirstChild('Goal')
-                local v35 = v33 and v33:FindFirstChild('Player')
-
+                local v34, v35 = v33 and v33:FindFirstChild('Goal'), v33 and v33:FindFirstChild('Player')
                 if v34 and v35 then
-                    -- Lógica de movimentação do mouse para a barra de pesca
-                    local v36 = v34.AbsolutePosition.Y
-                    local v37 = v34.AbsoluteSize.Y
+                    local v36, v37 = v34.AbsolutePosition.Y, v34.AbsoluteSize.Y
                     local v38 = v35.AbsolutePosition.Y + v35.AbsoluteSize.Y / 2
-                    local v39 = v36 + v37 / 2
-                    local v40 = v36 + v37
-
                     mousemoveabs(vu15.ViewportSize.X / 2, vu15.ViewportSize.Y / 2)
-
                     local v41 = math.max(v32 - vu19, vu23)
                     local v42 = not vu17 and 0 or (v38 - vu17) / v41
-
                     table.insert(vu20, 1, v42)
                     if #vu20 > 5 then table.remove(vu20) end
-
                     local v46 = 0
                     for _, v in ipairs(vu20) do v46 += v end
-
                     local v48 = v46 / #vu20
                     local v49 = vu18 == 0 and 0 or (v48 - vu18) / v41
-
                     vu17, vu18, vu19 = v38, v48, v32
-
                     local v50 = v38 + v48 * vu22 + 0.6 * v49 * vu22 ^ 2
                     local v57 = v36 + math.min(math.max(6, math.abs(v48) * 0.2), v37 * 0.35)
-                    local v58 = v40 - math.min(math.max(6, math.abs(v48) * 0.2), v37 * 0.35)
-
-                    if v50 < v57 then
-                        if vu16 then vu16 = false; mouse1release() end
-                    elseif v50 > v58 then
-                        if not vu16 then vu16 = true; mouse1press() end
+                    local v58 = (v36 + v37) - math.min(math.max(6, math.abs(v48) * 0.2), v37 * 0.35)
+                    if v50 < v57 then if vu16 then vu16 = false; mouse1release() end
+                    elseif v50 > v58 then if not vu16 then vu16 = true; mouse1press() end
                     else
                         if vu16 then vu16 = false; mouse1release() end
-                        mouse1press()
-                        task.wait(0.02)
-                        mouse1release()
+                        mouse1press(); task.wait(0.02); mouse1release()
                     end
                 end
             else
@@ -162,29 +143,25 @@ task.spawn(function()
     end
 end)
 
--- Loop de Venda Inteligente (Checa Backpack antes)
+-- Loop Venda Inteligente
 task.spawn(function()
     while true do
         for _, fish in ipairs(fishes) do
-            if vu1[fish.cfg] == true then
-                local quantidade = GetFishCount(fish.name)
-                if quantidade > 0 then
-                    -- Espera um tempo aleatório entre 2 e 4 segundos para não ser banido
-                    task.wait(math.random(20, 40) / 10) 
+            if vu1[fish.cfg] then
+                if GetFishCount(fish.name) > 0 then
+                    task.wait(math.random(20, 40) / 10)
                     SellSpecificFish(fish.name)
                 end
             end
         end
-        task.wait(3) -- Pausa entre ciclos de verificação de inventário
+        task.wait(3)
     end
 end)
 
 -- Anti-AFK
 task.spawn(function()
     while true do
-        if vu1.AntiAFK then
-            vu15.CFrame = vu15.CFrame * CFrame.Angles(0, math.rad(0.5), 0)
-        end
+        if vu1.AntiAFK then vu15.CFrame = vu15.CFrame * CFrame.Angles(0, math.rad(0.5), 0) end
         task.wait(60)
     end
 end)
@@ -192,11 +169,12 @@ end)
 -- =============================================================================
 -- CRIAÇÃO DOS CONTROLES NA UI
 -- =============================================================================
-v7:NewToggle('Auto Fish', 'Inicia a pesca automatica', function(v) vu1.AutoFish = v end)
-v7:NewToggle('Anti-AFK', 'Impede de ser desconectado', function(v) vu1.AntiAFK = v end)
+v7:NewToggle('Auto Fish', 'Pesca automatica', function(v) vu1.AutoFish = v end)
+v7:NewToggle('Anti-AFK', 'Evita kick', function(v) vu1.AntiAFK = v end)
+v7:NewToggle('Auto Buy Bait', 'Compra isca comum', function(v) vu1.AutoBuyBait = v end)
 
 for _, fish in ipairs(fishes) do
-    v9:NewToggle('Vender ' .. fish.name, 'Vende apenas se houver no inventario', function(v)
+    v9:NewToggle('Vender ' .. fish.name, 'Venda segura via Backpack', function(v)
         vu1[fish.cfg] = v
     end)
 end
