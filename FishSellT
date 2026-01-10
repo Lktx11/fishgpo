@@ -1,0 +1,371 @@
+local vu1 = getgenv()
+
+vu1.AutoFish = false
+vu1.AntiAFK = false
+vu1.AutoBuyBait = false
+vu1.SellAnglerfish = false
+vu1.SellDarkSkeletalShark = false
+vu1.SellJackOBite = false
+vu1.SellSwordfish = false
+vu1.SellGoldenPolkaPuffer = false
+vu1.SellGoldenRibbonAngelfish = false
+vu1.SellGoldenTigerfin = false
+vu1.SellSkeletalShark = false
+vu1.SellCandyCornSquid = false
+vu1.SellCrimsonPolkaPuffer = false
+vu1.SellCrimsonSnapper = false
+vu1.SellExoticTigerfin = false
+vu1.SellFangfish = false
+vu1.SellZebraRibbonAngelfish = false
+vu1.SellBlueLipGrouper = false
+
+-- UI
+local v2 = loadstring(game:  HttpGet('https://raw.githubusercontent.com/Lktx11/fishgpo/refs/heads/main/janela'))().CreateLib('Raph Pesca Automatica', 'HalloweenTheme')
+
+local v3 = v2:AddTab('Main')
+local v7 = v3:NewSection('Fishing / Player')
+local v8 = v2:AddTab('Sell Fish')
+
+-- SERVICES / VARS
+local vu12 = game:  GetService('Players').LocalPlayer
+local vu14 = vu12:WaitForChild('PlayerGui')
+local vu15 = workspace. CurrentCamera
+
+local vu16 = false
+local vu17 = nil
+local vu18 = 0
+local vu19 = tick()
+local vu20 = {}
+
+local vu21 = 0. 025
+local vu22 = 0.04
+local vu23 = 0.003
+
+local vu24 = false
+local vu25 = false
+local vu26 = nil
+
+-- RECAST
+local function vu30()
+    local x = vu15. ViewportSize.X / 2
+    local y = vu15.ViewportSize.Y / 2
+    mousemoveabs(x, y)
+    mouse1click()
+end
+
+-- FUNÇÃO PARA VENDER PEIXE ESPECÍFICO
+local function SellSpecificFish(fishName)
+    task.wait(math.random(90, 180))
+    
+    pcall(function()
+        local args = {
+            [1] = {
+                ["Fish"] = fishName,
+                ["All"] = false,
+                ["Method"] = "SellFish"
+            }
+        }
+        game:  GetService("ReplicatedStorage").FishingShopRemote: InvokeServer(unpack(args))
+    end)
+end
+
+-- =========================
+-- AUTO FISH
+-- =========================
+task.spawn(function()
+    while true do
+        if vu1.AutoFish then
+            local v31 = vu14:FindFirstChild('FishingUIBill')
+            local v32 = tick()
+
+            if v31 then
+                vu24 = true
+                vu25 = true
+                vu26 = nil
+
+                local v33 = v31:FindFirstChild('Frame')
+                if not v33 then
+                    task.wait(0.05)
+                else
+                    local v34 = v33:FindFirstChild('Goal')
+                    local v35 = v33:FindFirstChild('Player')
+
+                    if v34 and v35 then
+                        local v36 = v34.AbsolutePosition.Y
+                        local v37 = v34.AbsoluteSize.Y
+                        local v38 = v35.AbsolutePosition.Y + v35.AbsoluteSize.Y / 2
+                        local v39 = v36 + v37 / 2
+                        local v40 = v36 + v37
+
+                        mousemoveabs(vu15.ViewportSize.X / 2, vu15.ViewportSize.Y / 2)
+
+                        local v41 = math.max(v32 - vu19, vu23)
+                        local v42 = not vu17 and 0 or (v38 - vu17) / v41
+
+                        table.insert(vu20, 1, v42)
+                        if #vu20 > 5 then
+                            table.remove(vu20)
+                        end
+
+                        local v46 = 0
+                        for _, v in ipairs(vu20) do
+                            v46 += v
+                        end
+
+                        local v48 = v46 / #vu20
+                        local v49 = vu18 == 0 and 0 or (v48 - vu18) / v41
+
+                        vu17 = v38
+                        vu18 = v48
+                        vu19 = v32
+
+                        local v50 = v38 + v48 * vu22 + 0.6 * v49 * vu22 ^ 2
+                        local v51 = math.abs(v48)
+                        local v52 = math.abs(v49)
+
+                        local v53 = math.max(12, v51 * 0.4 + v52 * 0.15)
+                        local v54 = math.max(6, v51 * 0.2 + v52 * 0.08)
+                        local v55 = (v51 > 80 or v52 > 400) and v53 or v54
+                        local v56 = math.min(v55, v37 * 0.35)
+
+                        local v57 = v36 + v56
+                        local v58 = v40 - v56
+
+                        if v50 < v57 then
+                            if vu16 then
+                                vu16 = false
+                                mouse1release()
+                            end
+                        elseif v50 > v58 then
+                            if not vu16 then
+                                vu16 = true
+                                mouse1press()
+                            end
+                        else
+                            if vu16 then
+                                vu16 = false
+                                mouse1release()
+                            end
+
+                            local v63 = math.abs(v50 - v39) / (v37 / 2)
+                            local v64 = vu21 / (math.clamp(v51 / 40, 0.8, 5) * math.clamp(v63 * 2, 0.5, 3))
+                            local v65 = math.clamp(v64, 0.008, 0.08)
+
+                            mouse1press()
+                            task.wait(v65 * 0.9)
+                            mouse1release()
+                            task.wait(v65 * 0.6)
+                        end
+                    else
+                        if vu16 then
+                            vu16 = false
+                            mouse1release()
+                        end
+                        vu20 = {}
+                        vu18 = 0
+                        vu17 = nil
+                    end
+                end
+            else
+                if vu24 and vu25 and not vu26 then
+                    vu25 = false
+                    vu26 = tick()
+                end
+
+                if vu26 and tick() - vu26 >= 10 then
+                    vu26 = nil
+                    vu30()
+                end
+
+                if vu16 then
+                    vu16 = false
+                    mouse1release()
+                end
+
+                vu20 = {}
+                vu18 = 0
+                vu17 = nil
+            end
+        elseif vu16 then
+            vu16 = false
+            mouse1release()
+        end
+
+        task.wait(0.003)
+    end
+end)
+
+-- =========================
+-- ANTI AFK
+-- =========================
+task. spawn(function()
+    while true do
+        if vu1.AntiAFK then
+            vu15.CFrame = vu15.CFrame * CFrame.  Angles(0, math.rad(0.  5), 0)
+        end
+        task.wait(180)
+    end
+end)
+
+-- =========================
+-- AUTO BUY BAIT
+-- =========================
+task. spawn(function()
+    while true do
+        if vu1.AutoBuyBait then
+            local args = {
+                [1] = workspace.BuyableItems:  FindFirstChild("Common Fish Bait"),
+                [2] = 1
+            }
+            pcall(function()
+                game:  GetService("ReplicatedStorage").Events.Shop:InvokeServer(unpack(args))
+            end)
+        end
+        task.wait(5)
+    end
+end)
+
+-- =========================
+-- AUTO SELL INDIVIDUAL FISH
+-- =========================
+task.spawn(function()
+    while true do
+        if vu1.SellAnglerfish then
+            task.spawn(function() SellSpecificFish("Anglerfish") end)
+            vu1.SellAnglerfish = false
+        end
+        if vu1.SellDarkSkeletalShark then
+            task.spawn(function() SellSpecificFish("Dark Skeletal Shark") end)
+            vu1.SellDarkSkeletalShark = false
+        end
+        if vu1.SellJackOBite then
+            task.spawn(function() SellSpecificFish("Jack-O'-Bite") end)
+            vu1.SellJackOBite = false
+        end
+        if vu1.SellSwordfish then
+            task.spawn(function() SellSpecificFish("Swordfish") end)
+            vu1.SellSwordfish = false
+        end
+        if vu1.SellGoldenPolkaPuffer then
+            task.spawn(function() SellSpecificFish("Golden Polka Puffer") end)
+            vu1.SellGoldenPolkaPuffer = false
+        end
+        if vu1.SellGoldenRibbonAngelfish then
+            task.spawn(function() SellSpecificFish("Golden Ribbon Angelfish") end)
+            vu1.SellGoldenRibbonAngelfish = false
+        end
+        if vu1.SellGoldenTigerfin then
+            task.spawn(function() SellSpecificFish("Golden Tigerfin") end)
+            vu1.SellGoldenTigerfin = false
+        end
+        if vu1.SellSkeletalShark then
+            task.spawn(function() SellSpecificFish("Skeletal Shark") end)
+            vu1.SellSkeletalShark = false
+        end
+        if vu1.SellCandyCornSquid then
+            task.spawn(function() SellSpecificFish("Candy Corn Squid") end)
+            vu1.SellCandyCornSquid = false
+        end
+        if vu1.SellCrimsonPolkaPuffer then
+            task.spawn(function() SellSpecificFish("Crimson Polka Puffer") end)
+            vu1.SellCrimsonPolkaPuffer = false
+        end
+        if vu1.SellCrimsonSnapper then
+            task. spawn(function() SellSpecificFish("Crimson Snapper") end)
+            vu1.SellCrimsonSnapper = false
+        end
+        if vu1.SellExoticTigerfin then
+            task.spawn(function() SellSpecificFish("Exotic Tigerfin") end)
+            vu1.SellExoticTigerfin = false
+        end
+        if vu1.SellFangfish then
+            task.spawn(function() SellSpecificFish("Fangfish") end)
+            vu1.SellFangfish = false
+        end
+        if vu1.SellZebraRibbonAngelfish then
+            task.spawn(function() SellSpecificFish("Zebra Ribbon Angelfish") end)
+            vu1.SellZebraRibbonAngelfish = false
+        end
+        if vu1.SellBlueLipGrouper then
+            task. spawn(function() SellSpecificFish("Blue-Lip Grouper") end)
+            vu1.SellBlueLipGrouper = false
+        end
+        
+        task.wait(1)
+    end
+end)
+
+-- =========================
+-- UI TOGGLES
+-- =========================
+v7: NewToggle('Auto Fish', '', function(v)
+    vu1.AutoFish = v
+end)
+
+v7:NewToggle('Anti-AFK', '', function(v)
+    vu1.AntiAFK = v
+end)
+
+v7:NewToggle('Auto Buy Bait', '', function(v)
+    vu1.AutoBuyBait = v
+end)
+
+v8:NewToggle('Sell Anglerfish', '', function(v)
+    vu1.SellAnglerfish = v
+end)
+
+v8:NewToggle('Sell Dark Skeletal Shark', '', function(v)
+    vu1.SellDarkSkeletalShark = v
+end)
+
+v8:NewToggle('Sell Jack-O\'-Bite', '', function(v)
+    vu1.SellJackOBite = v
+end)
+
+v8:NewToggle('Sell Swordfish', '', function(v)
+    vu1.SellSwordfish = v
+end)
+
+v8:NewToggle('Sell Golden Polka Puffer', '', function(v)
+    vu1.SellGoldenPolkaPuffer = v
+end)
+
+v8:NewToggle('Sell Golden Ribbon Angelfish', '', function(v)
+    vu1.SellGoldenRibbonAngelfish = v
+end)
+
+v8:NewToggle('Sell Golden Tigerfin', '', function(v)
+    vu1.SellGoldenTigerfin = v
+end)
+
+v8:NewToggle('Sell Skeletal Shark', '', function(v)
+    vu1.SellSkeletalShark = v
+end)
+
+v8:NewToggle('Sell Candy Corn Squid', '', function(v)
+    vu1.SellCandyCornSquid = v
+end)
+
+v8:NewToggle('Sell Crimson Polka Puffer', '', function(v)
+    vu1.SellCrimsonPolkaPuffer = v
+end)
+
+v8:NewToggle('Sell Crimson Snapper', '', function(v)
+    vu1.SellCrimsonSnapper = v
+end)
+
+v8:NewToggle('Sell Exotic Tigerfin', '', function(v)
+    vu1.SellExoticTigerfin = v
+end)
+
+v8:NewToggle('Sell Fangfish', '', function(v)
+    vu1.SellFangfish = v
+end)
+
+v8:NewToggle('Sell Zebra Ribbon Angelfish', '', function(v)
+    vu1.SellZebraRibbonAngelfish = v
+end)
+
+v8:NewToggle('Sell Blue-Lip Grouper', '', function(v)
+    vu1.SellBlueLipGrouper = v
+end)
