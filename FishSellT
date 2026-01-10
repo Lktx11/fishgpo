@@ -30,13 +30,13 @@ for _, fish in ipairs(fishes) do vu1[fish.cfg] = false end
 -- INTERFACE (Utilizando SimpleKavo de x.txt)
 -- =============================================================================
 local SimpleKavo = loadstring(game:HttpGet('https://raw.githubusercontent.com/Lktx11/fishgpo/refs/heads/main/janela'))()
-local v2 = SimpleKavo.CreateLib('Raph Pesca Automatica', 'HalloweenTheme')
+local v2 = SimpleKavo.CreateLib('Raph faz o L', 'HalloweenTheme')
 
 local v3 = v2:AddTab('Main')
-local v7 = v3:NewSection('Fishing / Player')
+local v7 = v3:NewSection('Pesca')
 
 local v8 = v2:AddTab('Sell Fish')
-local v9 = v8:NewSection('Individual Sell')
+local v9 = v8:NewSection('Vender Peixinho')
 
 -- =============================================================================
 -- SERVIÇOS E VARIÁVEIS DO JOGADOR
@@ -174,7 +174,7 @@ v7:NewToggle('Anti-AFK', 'Evita kick', function(v) vu1.AntiAFK = v end)
 v7:NewToggle('Auto Buy Bait', 'Compra isca comum', function(v) vu1.AutoBuyBait = v end)
 
 for _, fish in ipairs(fishes) do
-    v9:NewToggle('Vender ' .. fish.name, 'Venda segura via Backpack', function(v)
+    v9:NewToggle('Vender ' .. fish.name, 'Venda de peixinho maneira', function(v)
         vu1[fish.cfg] = v
     end)
 end
